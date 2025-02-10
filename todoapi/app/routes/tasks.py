@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from models.models import CreateTaskPayload, UpdateTaskPayload
+from app.models.models import CreateTaskPayload, UpdateTaskPayload
 from app.crud.crud import create_task, get_all_tasks, get_task_by_uid, update_task, delete_task
 
 router = APIRouter()

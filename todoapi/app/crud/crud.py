@@ -58,7 +58,6 @@ def delete_task(task_uid: str):
 
 
 #USER CRUD
-
 def user_serializer(user):
     return {
         "id": str(user["_id"]),

@@ -3,13 +3,9 @@ from pydantic import BaseModel
 from app.database.db import Users_Collection
 from fastapi import APIRouter, HTTPException
 import datetime, uuid
-
+from app.models.models import CreateUserPayload,UpdateUserPayload
 router = APIRouter()
 
-class CreateUserPayload(BaseModel):
-    name: str
-    email: str
-    mobile: str
 
 @router.post("/create/{user_uid}")
 def create_user(payload: CreateUserPayload):
