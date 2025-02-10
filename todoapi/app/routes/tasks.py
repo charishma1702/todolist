@@ -4,7 +4,7 @@ from app.crud.crud import create_task, get_all_tasks, get_task_by_uid, update_ta
 
 router = APIRouter()
 
-@router.post("/create")
+@router.post("/create-task")
 async def create_task_route(payload: CreateTaskPayload):
     return create_task(payload)
 

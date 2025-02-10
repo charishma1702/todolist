@@ -1,55 +1,25 @@
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from app.database.db import Users_Collection
-from fastapi import APIRouter, HTTPException
-import datetime, uuid
-from app.models.models import CreateUserPayload,UpdateUserPayload
+from fastapi import APIRouter
+from app.models.models import CreateUserPayload, UpdateUserPayload
+from app.crud.crud import create_user, get_all_users, get_user_by_uid, update_user, delete_user
+
 router = APIRouter()
 
-
-@router.post("/create/{user_uid}")
-def create_user(payload: CreateUserPayload):
-    user_dict = payload.dict()
-    user_dict['uid'] = str(uuid.uuid4())
-    user_dict['created_at'] = datetime.datetime.now()
-    try:
-        Users_Collection.insert_one(user_dict)
-        print(user_dict['uid'])
-        return {"message": "User created successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+@router.post("/create")
+async def create_user_route(payload: CreateUserPayload):
+    return create_user(payload)
 
 @router.get("/get-all-users")
-def get_all_users():
-    users = list(Users_Collection.find())
-    for user in users:
-        user["_id"] = str(user["_id"])
-    return {"users": users}
-
+async def get_all_users_route():
+    return get_all_users()
 
 @router.get("/get/{user_uid}")
-def view_user(user_uid: str):
-    user = Users_Collection.find_one({"uid": user_uid})
-    if user:
-        user_id = str(user.get("_id"))
-        return {"user_id": user_id, "name": user.get("name"), "email": user.get("email"),"uid":user.get("uid")}
-    else:
-        raise HTTPException(status_code=404, detail="User not found")
+async def get_user_route(user_uid: str):
+    return get_user_by_uid(user_uid)
 
-@router.put("/put/{user_uid}")
-def update_user(user_uid: str, payload: CreateUserPayload):
-    user_dict = payload.dict()
-    try:
-        Users_Collection.update_one({"uid": user_uid}, {"$set": user_dict})
-        return {"message": "User  updated successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@router.put("/update/{user_uid}")
+async def update_user_route(user_uid: str, payload: UpdateUserPayload):
+    return update_user(user_uid, payload)
 
 @router.delete("/delete/{user_uid}")
-def delete_user(user_uid: str):
-    try:
-        Users_Collection.delete_one({"uid": user_uid})
-        return {"message": "User deleted successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def delete_user_route(user_uid: str):
+    return delete_user(user_uid)

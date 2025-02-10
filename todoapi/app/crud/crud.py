@@ -12,7 +12,9 @@ def task_serializer(task):
         "uid": task.get("uid", ""),
         "due_date": task.get("due_date", None),
         "priority_level": task.get("priority_level", None),
-        "user_id": task.get("user_id", None)
+        "user_id": task.get("user_id", None),
+        "category":task.get('category'," ")
+        
     }
 
 def create_task(payload):
@@ -28,8 +30,12 @@ def create_task(payload):
         raise HTTPException(status_code=500, detail=str(e))
 
 def get_all_tasks():
-    tasks = list(Tasks_Collection.find())
-    return [task_serializer(task) for task in tasks]
+    try:
+        tasks = list(Tasks_Collection.find())
+        return [task_serializer(task) for task in tasks]
+    except Exception as e:
+        print(f"Error retrieving tasks: {e}")
+        return {"error": "Failed to retrieve tasks"}
 
 def get_task_by_uid(task_uid: str):
     task = Tasks_Collection.find_one({"uid": task_uid})
