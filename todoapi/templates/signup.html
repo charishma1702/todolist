@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TO-DO</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="login.js"></script>
+    </head>
+    <body>
+        <div class="max-w-md mx-auto mt-10 LoginPage md:ml-auto">
+            <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 animate-slide-in-right" id="signup-form">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="firstname">First Name</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="firstname" name="firstname" required>
+                <div><br>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="lastname">Last Name</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="lastname" name="lasrname" placeholder="lastname">
+                </div><br>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="password" name="password" placeholder="password" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" id="password" name="password" placeholder="password" required>
+                </div>
+                <button onclick="signin()" class="bg-violet-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Login</button>
+                <div class="text-red-500 text-xs mt-2" id="error-message"></div>
+                <p>Already have an account?<a href="login.html" class="text-violet-500 hover:text-purple-700 font-bold "> Sign In</a></p>
+            </form>
+        </div>
+        <div class="absolute top-0 right-0 animate-image">
+        </div>
+        
+    </body>
+</html>

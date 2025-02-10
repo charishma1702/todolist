@@ -1,0 +1,186 @@
+<body class="overflow-hidden w-screen h-screen">
+    <div class="relative h-screen flex">
+        <main class="flex-1 relative z-10 px-9 pt-9">
+            <div class="flex items-center w-full">
+                <h1 class="text-3xl font-bold text-black flex-grow" id="greeting-text">
+                    Hi, Charishma! 👋
+                </h1>
+
+                <div class="relative ml-auto p-2">
+                    <button id="today-button" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-white">Today</button>
+                    <div id="calendar-dropdown" class="hidden absolute top-12 right-0 bg-white shadow-md rounded-lg p-2">
+                        <input type="date" id="calendar-input" class="bg-gray-200 px-4 py-2 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="relative p-2">
+                    <button id="profile-button" class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center hover:bg-gray-700 hover:text-white">
+                        👤
+                    </button>
+                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg">
+                        <ul class="text-gray-700">
+                            <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="theme-button">Theme</li>
+                            <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="sign-out-button">Sign Out</li>
+                        </ul>
+                    </div>
+                </div>
+            </div><br>
+
+            <button id="createTaskBtn" class="fixed top-18 bg-gray-300 text-black px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 hover:text-white">
+                + Create Task
+            </button><br><br>
+
+            <!-- Task List Container -->
+            <div id="taskContainer" class="mt-6 space-y-4">
+                <!-- Tasks will be appended here -->
+            </div>
+
+            <!-- Task Modal -->
+            <div id="taskModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <h2 class="text-xl font-bold mb-4">Create Task</h2>
+
+                    
+                    <label class="block mb-1">Category</label>
+                    <select id="taskCategory" class="w-full px-3 py-2 border rounded-lg mb-3">
+                        <option value="Personal">👤 Personal</option>
+                        <option value="Work">💻 Work</option>
+                        <option value="Travel">✈️ Travel</option>
+                        <option value="Study">📚 Study</option>
+                        <option value="WorkOut">🏋️‍♂️ WorkOut</option>
+                        <option value="Diet">🥗Diet</option>
+                        
+                    </select>
+                <input id="taskName" type="text" placeholder="Task Name" class="w-full px-3 py-2 border rounded-lg mb-3">
+
+                    <label class="block mb-1">Due Date</label>
+                    <input id="taskDate" type="date" class="w-full px-3 py-2 border rounded-lg mb-3">
+
+                    <label class="block mb-1">Time</label>
+                    <input id="taskTime" type="time" class="w-full px-3 py-2 border rounded-lg mb-3">
+
+                    <label class="block mb-1">Priority</label>
+                    <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg mb-3">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button id="cancelTaskBtn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-red-600">Cancel</button>
+                        <button id="addTaskBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-800">Add Task</button>
+                    </div>
+                </div>
+            </div>
+        </main> 
+    </div>
+
+    <script>
+        const createTaskBtn = document.getElementById("createTaskBtn");
+        const taskModal = document.getElementById("taskModal");
+        const cancelTaskBtn = document.getElementById("cancelTaskBtn");
+        const addTaskBtn = document.getElementById("addTaskBtn");
+
+        const taskNameInput = document.getElementById("taskName");
+        const taskCategoryInput = document.getElementById("taskCategory");
+        const taskDateInput = document.getElementById("taskDate");
+        const taskTimeInput = document.getElementById("taskTime");
+        const taskPriorityInput = document.getElementById("taskPriority");
+
+        const taskContainer = document.getElementById("taskContainer");
+
+        // Show modal
+        createTaskBtn.addEventListener("click", () => {
+            taskModal.classList.remove("hidden");
+        });
+
+        // Hide modal
+        cancelTaskBtn.addEventListener("click", () => {
+            taskModal.classList.add("hidden");
+        });
+
+        // Add task
+        addTaskBtn.addEventListener("click", () => {
+            const taskName = taskNameInput.value.trim();
+            const taskCategory = taskCategoryInput.value;
+            const taskDate = taskDateInput.value;
+            const taskTime = taskTimeInput.value;
+            const taskPriority = taskPriorityInput.value;
+
+            if (taskName) {
+                // Create a task element
+                const taskElement = document.createElement("div");
+                taskElement.classList.add("bg-white", "p-4", "rounded-lg", "shadow-md", "flex", "justify-between", "items-center");
+
+                // Task content
+                taskElement.innerHTML = `
+                    <div>
+                        <h3 class="text-lg font-bold">${taskName}</h3>
+                        <p class="text-sm text-gray-600">${taskCategory} | ${taskDate} | ${taskTime} | Priority: <span class="font-semibold">${taskPriority}</span></p>
+                    </div>
+                    <button class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-700 removeTaskBtn">Delete</button>
+                `;
+
+                // Append task to container
+                taskContainer.appendChild(taskElement);
+
+                // Attach event listener to remove button
+                taskElement.querySelector(".removeTaskBtn").addEventListener("click", () => {
+                    taskElement.remove();
+                });
+
+                // Close modal
+                taskModal.classList.add("hidden");
+
+                // Reset form
+                taskNameInput.value = "";
+                taskDateInput.value = "";
+                taskTimeInput.value = "";
+            }
+        });
+
+        // Function to set greeting based on the time of day
+        function setGreeting() {
+            const now = new Date();
+            const hours = now.getHours();
+            let greeting = "Hi, Charishma! 👋";
+
+            if (hours >= 5 && hours < 12) {
+                greeting = "Good Morning, Charishma! ☀️";
+            } else if (hours >= 12 && hours < 17) {
+                greeting = "Good Afternoon, Charishma! 🌤️";
+            } else {
+                greeting = "Good Evening, Charishma! 🌙";
+            }
+
+            document.getElementById("greeting-text").textContent = greeting;
+        }
+
+        setGreeting();
+
+        // Today button toggle
+        const todayButton = document.getElementById("today-button");
+        const calendarDropdown = document.getElementById("calendar-dropdown");
+        const calendarInput = document.getElementById("calendar-input");
+
+        todayButton.addEventListener("click", () => {
+            calendarDropdown.classList.toggle("hidden");
+
+            const today = new Date().toISOString().split("T")[0];
+            calendarInput.value = today;
+
+            setTimeout(() => {
+                calendarInput.showPicker();
+            }, 100);
+        });
+
+        // Profile dropdown toggle
+        const profileButton = document.getElementById("profile-button");
+        const profileDropdown = document.getElementById("profile-dropdown");
+
+        profileButton.addEventListener("click", () => {
+            profileDropdown.classList.toggle("hidden");
+        });
+
+    </script>
+</body>

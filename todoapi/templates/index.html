@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <style>
+        /* Layout styles */
+        .container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidepanel {
+            width: 250px; /* Adjust width as needed */
+            background: #f0f0f0;
+            padding: 10px;
+        }
+        .body-content {
+            width:screen;
+            padding: 20px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidepanel w-80">
+            {% include 'sidepanel.html' %}
+        </div>
+
+        <div class="body-content flex-grow">
+            {% include 'body.html' %}
+        </div>
+    </div>
+
+</body>
+</html>
