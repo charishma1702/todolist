@@ -1,12 +1,13 @@
 from pydantic import BaseModel
 import datetime
 from typing import Optional
+
 class CreateTaskPayload(BaseModel):
     name: str
     status: str | None
     due_date: datetime.datetime
     priority_level: str
-    description: Optional[str] =None
+    description: Optional[str] = None
     category: str
 
 class UpdateTaskPayload(BaseModel):
