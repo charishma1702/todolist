@@ -102,18 +102,7 @@ def validate_status(cls, value):
     return value
 
 def validate_collection_name(collection_name: str) -> str:
-    """
-    Validates the collection name.
 
-    Args:
-    - collection_name (str): The name of the collection.
-
-    Returns:
-    - The validated collection name.
-
-    Raises:
-    - HTTPException: If the collection name is invalid.
-    """
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
     return collection_name
