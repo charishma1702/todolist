@@ -1,0 +1,17 @@
+__pycache__/
+.pyc
+
+crud/
+__pycache__/
+crud.cpython-310.pyc
+
+venv/
+bin
+include
+lib
+
+unwanted/
+login.html
+personal.html
+signup.html
+work.html

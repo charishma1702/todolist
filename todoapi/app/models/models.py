@@ -13,7 +13,6 @@ class CreateTaskPayload(BaseModel):
 class UpdateTaskPayload(BaseModel):
     name: str | None
     description: str | None
-    status: str | None
     due_date: datetime.datetime | None
     category:str
 
@@ -26,3 +25,7 @@ class UpdateUserPayload(BaseModel):
     name: str | None = None
     email: str | None = None
     mobile: str | None = None
+
+
+class UpdateTaskStatusPayload(BaseModel):
+    status: str 
