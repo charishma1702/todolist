@@ -78,6 +78,11 @@
             </div>
         </main>
     </div>
+    <!-- Error Toast -->
+     <div id="error-toast" class="fixed bottom-4 right-4 bg-red-500 text-white rounded-lg px-4 py-2 shadow-lg hidden opacity-0 transition-opacity duration-300">
+        <span id="error-message"></span>
+    </div>
+
     <script>
 
 const taskInputs = {
@@ -144,13 +149,12 @@ addTaskBtn.addEventListener("click", async () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || "Failed to save task");
 
+
         if (editingTaskId) {
-            updateTaskInUI(editingTaskId, task);
-            editingTaskId = null;
-            addTaskBtn.textContent = "Add Task";
-        } else {
-            addTaskToUI(data.data);
-        }
+    updateTaskInUI(editingTaskId, task); // Call the update function here
+    editingTaskId = null;
+    addTaskBtn.textContent = "Add Task";
+}
 
         resetTaskForm(); 
         taskModal.classList.add("hidden"); // Close modal after success
@@ -179,7 +183,7 @@ createTaskBtn.addEventListener("click", (event) => {
 
 
 function openEditModal(task) {
-    editingTaskId = task._id; // Store the task ID being edited
+    editingTaskId = task._id;
     taskInputs.name.value = task.name;
     taskInputs.category.value = task.category;
     taskInputs.date.value = task.due_date.split("T")[0];
@@ -187,39 +191,39 @@ function openEditModal(task) {
     taskInputs.priority.value = task.priority_level;
     taskInputs.description.value = task.description;
     taskModal.classList.remove("hidden");
-    addTaskBtn.textContent = "Update Task"; // Change button text to Update
-    
-    // Change title to Edit Task
+    addTaskBtn.textContent = "Update Task";
     taskModalTitle.textContent = "Edit Task"; 
 }
 
 
+
 function resetTaskForm() {
-    // Clear all input fields
     taskInputs.name.value = "";
     taskInputs.description.value = "";
     taskInputs.date.value = "";
     taskInputs.time.value = "";
-    
-    // Reset select elements to default values
     taskInputs.category.value = "Personal";
     taskInputs.priority.value = "Low";
     
-    // Clear editing state
-    editingTaskId = null;
-    addTaskBtn.textContent = "Add Task"; // Reset button text to default
+    editingTaskId = null;  // Clear editing state
+    addTaskBtn.textContent = "Add Task";
 }
 
 
 function showErrorToast(message) {
     const toast = document.getElementById("error-toast");
-    document.getElementById("error-message").textContent = message;
+    const errorMessage = document.getElementById("error-message");
+    
+    errorMessage.textContent = message;
     toast.classList.remove("hidden", "opacity-0");
     toast.classList.add("opacity-100");
+    
     setTimeout(() => {
         toast.classList.add("opacity-0");
-        setTimeout(() => toast.classList.add("hidden"), 300);
-    }, 3000);
+        setTimeout(() => {
+            toast.classList.add("hidden");
+        }, 300); // Duration must match transition
+    }, 3000); // Duration for visibility
 }
 
 function addDescriptionToggle(taskElement) {
@@ -276,17 +280,8 @@ function addTaskToUI(task) {
         event.stopPropagation(); // Prevents the click from toggling the description
         deleteTask(task._id, taskElement);
     });
-
-    // Toggle description on click
     // Toggle description on click, excluding button clicks
-taskElement.addEventListener("click", (event) => {
-    if (!event.target.classList.contains("editTaskBtn") && !event.target.classList.contains("removeTaskBtn")) {
-        const descriptionElement = taskElement.querySelector(".taskDescription");
-        descriptionElement.classList.toggle("hidden");
-    }
-});
-
-
+    addDescriptionToggle(taskElement);
 }
 
 let editingTaskId = null;
@@ -385,11 +380,7 @@ function updateTaskInUI(taskId, updatedData) {
             });
 
             // Toggle description when task name is clicked
-            const taskNameElement = taskElement.querySelector(".taskName");
-            taskNameElement.addEventListener("click", () => {
-                const descriptionElement = taskElement.querySelector(".taskDescription");
-                descriptionElement.classList.toggle("hidden");
-            });
+                addDescriptionToggle(taskElement);
         }
     });
 }
