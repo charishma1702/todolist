@@ -1,4 +1,4 @@
-from app.database.db import Users_Collection, Tasks_Collection
+from app.database.db import Users_Collection, Tasks_Collection, Categories_Collection
 from bson import ObjectId
 from fastapi import HTTPException
 
@@ -6,11 +6,12 @@ from fastapi import HTTPException
 # Mapping collection names to actual MongoDB collections
 COLLECTIONS = {
     "users": Users_Collection,
-    "tasks": Tasks_Collection
+    "tasks": Tasks_Collection,
+    "category": Categories_Collection
 }
 
 # Generic function to create a document in a collection
-def create_document(collection_name: str, payload: dict):  # ✅ Accept dict directly
+def create(collection_name: str, payload: dict):  # ✅ Accept dict directly
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
@@ -26,7 +27,7 @@ def create_document(collection_name: str, payload: dict):  # ✅ Accept dict dir
 
 
 # Generic function to get a document by ID
-def get_document_by_id(collection_name: str, item_id: str):
+def get_by_id(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
@@ -43,7 +44,7 @@ def get_document_by_id(collection_name: str, item_id: str):
 
 
 # Generic function to get all documents from a collection
-def get_all_documents(collection_name: str):
+def get_all(collection_name: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
@@ -61,7 +62,7 @@ def get_all_documents(collection_name: str):
 
 
 # Generic function to update a document by ID
-def update_document(collection_name: str, item_id: str, payload: dict):  # ✅ Accept dict directly
+def update(collection_name: str, item_id: str, payload: dict):  # ✅ Accept dict directly
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
@@ -80,7 +81,7 @@ def update_document(collection_name: str, item_id: str, payload: dict):  # ✅ A
 
 
 # Generic function to delete a document by ID
-def delete_document(collection_name: str, item_id: str):
+def delete(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
@@ -102,18 +103,8 @@ def validate_status(cls, value):
     return value
 
 def validate_collection_name(collection_name: str) -> str:
-    """
-    Validates the collection name.
 
-    Args:
-    - collection_name (str): The name of the collection.
-
-    Returns:
-    - The validated collection name.
-
-    Raises:
-    - HTTPException: If the collection name is invalid.
-    """
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
     return collection_name
+

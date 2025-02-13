@@ -29,3 +29,8 @@ class UpdateUserPayload(BaseModel):
 
 class UpdateTaskStatusPayload(BaseModel):
     status: str 
+
+
+class CreateCategoryPayload(BaseModel):
+    name: str
+

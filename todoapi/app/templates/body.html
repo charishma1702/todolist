@@ -1,3 +1,10 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
 <body class="overflow-hidden w-screen h-screen">
     <div class="relative h-screen flex">
         <main class="flex-1 relative z-10 px-9 pt-9">
@@ -24,9 +31,10 @@
                 </div>
             </div><br>
             
-            <button id="createTaskBtn" class="top-18 bg-gray-300 text-black px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 hover:text-white">
+            <button id="createTaskBtn" class="top-18 bg-gray-300 text-black font-bold px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 hover:text-white">
                 + Create Task
             </button><br><br>
+            
             
             <div id="taskContainer" class="mt-6 space-y-4"></div>
             
@@ -71,6 +79,12 @@
             </div>
         </main>
     </div>
+    <!-- Error Toast -->
+<div id="error-toast" class="fixed bottom-4 right-4 bg-red-500 text-white rounded-lg px-4 py-2 shadow-lg hidden opacity-0 transition-opacity duration-300 ease-in-out">
+    <span id="error-message"></span>
+</div>
+
+
     <script>
 
 const taskInputs = {
@@ -137,13 +151,12 @@ addTaskBtn.addEventListener("click", async () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || "Failed to save task");
 
+
         if (editingTaskId) {
-            updateTaskInUI(editingTaskId, task);
-            editingTaskId = null;
-            addTaskBtn.textContent = "Add Task";
-        } else {
-            addTaskToUI(data.data);
-        }
+    updateTaskInUI(editingTaskId, task); // Call the update function here
+    editingTaskId = null;
+    addTaskBtn.textContent = "Add Task";
+}
 
         resetTaskForm(); 
         taskModal.classList.add("hidden"); // Close modal after success
@@ -152,6 +165,23 @@ addTaskBtn.addEventListener("click", async () => {
     }
 });
 
+function showErrorToast(message) {
+    const toast = document.getElementById("error-toast");
+    const errorMessage = document.getElementById("error-message");
+
+    errorMessage.textContent = message;
+    toast.classList.remove("hidden");
+    toast.classList.add("opacity-100");
+
+    setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0");
+
+        setTimeout(() => {
+            toast.classList.add("hidden");
+        }, 300); // This duration matches the Tailwind transition duration
+    }, 3000); // Toast stays visible for 3 seconds
+}
 
 window.addEventListener("click", (event) => {
     const isClickInsideModal = taskModal.contains(event.target);
@@ -172,7 +202,7 @@ createTaskBtn.addEventListener("click", (event) => {
 
 
 function openEditModal(task) {
-    editingTaskId = task._id; // Store the task ID being edited
+    editingTaskId = task._id;
     taskInputs.name.value = task.name;
     taskInputs.category.value = task.category;
     taskInputs.date.value = task.due_date.split("T")[0];
@@ -180,49 +210,34 @@ function openEditModal(task) {
     taskInputs.priority.value = task.priority_level;
     taskInputs.description.value = task.description;
     taskModal.classList.remove("hidden");
-    addTaskBtn.textContent = "Update Task"; // Change button text to Update
-    
-    // Change title to Edit Task
+    addTaskBtn.textContent = "Update Task";
     taskModalTitle.textContent = "Edit Task"; 
 }
 
 
+
 function resetTaskForm() {
-    // Clear all input fields
     taskInputs.name.value = "";
     taskInputs.description.value = "";
     taskInputs.date.value = "";
     taskInputs.time.value = "";
-    
-    // Reset select elements to default values
     taskInputs.category.value = "Personal";
     taskInputs.priority.value = "Low";
     
-    // Clear editing state
-    editingTaskId = null;
-    addTaskBtn.textContent = "Add Task"; // Reset button text to default
-}
-
-
-function showErrorToast(message) {
-    const toast = document.getElementById("error-toast");
-    document.getElementById("error-message").textContent = message;
-    toast.classList.remove("hidden", "opacity-0");
-    toast.classList.add("opacity-100");
-    setTimeout(() => {
-        toast.classList.add("opacity-0");
-        setTimeout(() => toast.classList.add("hidden"), 300);
-    }, 3000);
+    editingTaskId = null;  // Clear editing state
+    addTaskBtn.textContent = "Add Task";
 }
 
 function addDescriptionToggle(taskElement) {
     taskElement.addEventListener("click", (event) => {
-        if (!event.target.classList.contains("editTaskBtn") && !event.target.classList.contains("removeTaskBtn")) {
+        // Check if the clicked element is NOT a button or inside a button
+        if (!event.target.closest("button")) {
             const descriptionElement = taskElement.querySelector(".taskDescription");
             descriptionElement.classList.toggle("hidden");
         }
     });
 }
+
 
 function addTaskToUI(task) {
     const taskElement = document.createElement("div");
@@ -269,17 +284,8 @@ function addTaskToUI(task) {
         event.stopPropagation(); // Prevents the click from toggling the description
         deleteTask(task._id, taskElement);
     });
-
-    // Toggle description on click
     // Toggle description on click, excluding button clicks
-taskElement.addEventListener("click", (event) => {
-    if (!event.target.classList.contains("editTaskBtn") && !event.target.classList.contains("removeTaskBtn")) {
-        const descriptionElement = taskElement.querySelector(".taskDescription");
-        descriptionElement.classList.toggle("hidden");
-    }
-});
-
-
+    addDescriptionToggle(taskElement);
 }
 
 let editingTaskId = null;
@@ -348,9 +354,18 @@ function updateTaskInUI(taskId, updatedData) {
                         <h3 class="taskName text-lg font-bold cursor-pointer">${updatedData.name}</h3>
                     </div>
                     <div class="flex space-x-2">
-                        <button class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-700 editTaskBtn">Edit</button>
-                        <button class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-700 removeTaskBtn">Delete</button>
-                    </div>
+            <!-- Edit Icon -->
+            <button class="editTaskBtn text-gray-500 hover:text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17h2M5 21h14a2 2 0 002-2v-5a2 2 0 00-2-2h-1.5a2 2 0 01-1.5-.75l-1-1.5a2 2 0 00-1.5-.75H10a2 2 0 01-1.5-.75L7 10.5a2 2 0 00-1.5-.75H4a2 2 0 00-2 2v9a2 2 0 002 2z" />
+                </svg>
+            </button>
+            <!-- Delete Icon -->
+            <button class="removeTaskBtn text-gray-500 hover:text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 00-1 1v1h6V4a1 1 0 00-1-1m-4 0h4" />
+                </svg>
+            </button>
                 </div>
                 <p class="text-sm text-gray-600 mt-2">
                     ${updatedData.category} | 
@@ -368,21 +383,22 @@ function updateTaskInUI(taskId, updatedData) {
             });
 
             taskElement.querySelector(".editTaskBtn").addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevents the description toggle
-                openEditModal(updatedData);
-            });
+    event.stopPropagation(); // Prevents the description toggle
+    openEditModal(updatedData);
+});
 
-            taskElement.querySelector(".removeTaskBtn").addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevents the description toggle
-                deleteTask(taskId, taskElement);
-            });
+taskElement.querySelector(".removeTaskBtn").addEventListener("click", (event) => {
+    event.stopPropagation(); // Prevents the description toggle
+    deleteTask(taskId, taskElement);
+});
+
 
             // Toggle description when task name is clicked
-            const taskNameElement = taskElement.querySelector(".taskName");
-            taskNameElement.addEventListener("click", () => {
-                const descriptionElement = taskElement.querySelector(".taskDescription");
-                descriptionElement.classList.toggle("hidden");
-            });
+            addDescriptionToggle(taskElement);
+
+            // Show the description after updating
+            const descriptionElement = taskElement.querySelector(".taskDescription");
+            descriptionElement.classList.remove("hidden");
         }
     });
 }
@@ -408,5 +424,4 @@ profileButton.addEventListener("click", () => profileDropdown.classList.toggle("
 
     </script>
 </body>
-
-
+</html>

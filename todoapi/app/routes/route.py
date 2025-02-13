@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from pathlib import Path
 from fastapi.templating import Jinja2Templates
-from app.crud.crud import (create_document, get_document_by_id, get_all_documents, update_document, delete_document)
-from app.models.models import (CreateTaskPayload, UpdateTaskPayload, CreateUserPayload, UpdateUserPayload,UpdateTaskStatusPayload)
-from app.database.db import Users_Collection, Tasks_Collection
+from app.crud.crud import (create, get_by_id, get_all, update, delete)
+from app.models.models import (CreateTaskPayload, UpdateTaskPayload, CreateUserPayload, UpdateUserPayload,UpdateTaskStatusPayload,CreateCategoryPayload)
+from app.database.db import Users_Collection, Tasks_Collection, Categories_Collection
 
 router = APIRouter()
 
@@ -21,7 +21,8 @@ UPDATE_MODELS = {
 # Mapping collection names to actual MongoDB collections
 COLLECTIONS = {
     "users": Users_Collection,
-    "tasks": Tasks_Collection
+    "tasks": Tasks_Collection,
+    "category":Categories_Collection
 }
 
 base_dir = Path(__file__).resolve().parent.parent.parent
@@ -32,15 +33,15 @@ async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-# Create a new document (user/task)
+# Create a new document (user/task/category)
 @router.post("/{collection_name}")
-async def create_item(collection_name: str, payload: CreateUserPayload | CreateTaskPayload):
+async def create_item(collection_name: str, payload: CreateUserPayload | CreateTaskPayload |CreateCategoryPayload):
     if collection_name not in CREATE_MODELS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
     validated_data = payload.model_dump()  # ✅ Convert Pydantic model to dictionary
 
-    return create_document(collection_name, validated_data)
+    return create(collection_name, validated_data)
 
 
 # Get a document by ID
@@ -49,7 +50,7 @@ async def get_item(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
-    return get_document_by_id(collection_name, item_id)
+    return get_by_id(collection_name, item_id)
 
 
 # Get all documents
@@ -58,7 +59,7 @@ async def get_all_items(collection_name: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
-    return get_all_documents(collection_name)
+    return get_all(collection_name)
 
 
 # Update a document by ID
@@ -69,7 +70,7 @@ async def update_item(collection_name: str, item_id: str, payload: UpdateUserPay
 
     validated_data = payload.model_dump(exclude_unset=True)  # ✅ Convert to dict
 
-    return update_document(collection_name, item_id, validated_data)
+    return update(collection_name, item_id, validated_data)
 
 
 @router.patch("/tasks/{item_id}/update_status")
@@ -77,7 +78,7 @@ async def update_task_status(item_id: str, payload: UpdateTaskStatusPayload):
     validated_data = payload.model_dump(exclude_unset=True)
     if "status" not in validated_data:
         raise HTTPException(status_code=400, detail="Status field is required")
-    return update_document("tasks", item_id, validated_data)
+    return update("tasks", item_id, validated_data)
 
 
 # Delete a document by ID
@@ -86,4 +87,5 @@ async def delete_item(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
-    return delete_document(collection_name, item_id)
+    return delete(collection_name, item_id)
+
