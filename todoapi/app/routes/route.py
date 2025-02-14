@@ -1,55 +1,56 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
-from pathlib import Path
-from fastapi.templating import Jinja2Templates
 from app.crud.crud import (create, get_by_id, get_all, update, delete)
 from app.models.models import (CreateTaskPayload, UpdateTaskPayload, CreateUserPayload, UpdateUserPayload,UpdateTaskStatusPayload,CreateCategoryPayload)
 from app.database.db import Users_Collection, Tasks_Collection, Categories_Collection
+from bson import ObjectId
 
 router = APIRouter()
 
 # Define allowed collection models for validation
 CREATE_MODELS = {
     "users": CreateUserPayload,
-    "tasks": CreateTaskPayload
+    "tasks": CreateTaskPayload,
+    "categories": CreateCategoryPayload
 }
 
 UPDATE_MODELS = {
     "users": UpdateUserPayload,
-    "tasks": UpdateTaskPayload
+    "tasks": UpdateTaskPayload,
+    "categories": UpdateTaskPayload
 }
 
 # Mapping collection names to actual MongoDB collections
 COLLECTIONS = {
     "users": Users_Collection,
     "tasks": Tasks_Collection,
-    "category":Categories_Collection
+    "categories":Categories_Collection
 }
 
-base_dir = Path(__file__).resolve().parent.parent.parent
-templates = Jinja2Templates(directory=str(base_dir / "app/templates"))
-
-@router.get("/")
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-
-# Create a new document (user/task/category)
 @router.post("/{collection_name}")
-async def create_item(collection_name: str, payload: CreateUserPayload | CreateTaskPayload |CreateCategoryPayload):
+async def create_item(collection_name: str, request: Request, payload: CreateUserPayload | CreateTaskPayload | CreateCategoryPayload):
     if collection_name not in CREATE_MODELS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
-    validated_data = payload.model_dump()  # ✅ Convert Pydantic model to dictionary
-
+    # Get the expected model for this collection
+    model = CREATE_MODELS[collection_name]
+    # If payload is provided, use it (for automatic Pydantic validation)
+    if payload:
+        validated_data = payload.model_dump()
+    else:
+        # Otherwise, parse the request body as JSON and manually validate
+        body = await request.json()
+        try:
+            model(**body)
+            validated_data = body
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail="Please provide valid data")
+    # Call the CRUD function to create the item in the database
     return create(collection_name, validated_data)
-
 
 # Get a document by ID
 @router.get("/{collection_name}/{item_id}")
 async def get_item(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
     return get_by_id(collection_name, item_id)
 
 
@@ -58,7 +59,6 @@ async def get_item(collection_name: str, item_id: str):
 async def get_all_items(collection_name: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
     return get_all(collection_name)
 
 
@@ -80,12 +80,23 @@ async def update_task_status(item_id: str, payload: UpdateTaskStatusPayload):
         raise HTTPException(status_code=400, detail="Status field is required")
     return update("tasks", item_id, validated_data)
 
+@router.patch("/categories/{item_id}")
+async def update_category(item_id: str, payload: dict):
+    validated_data = {k: v for k, v in payload.items() if v is not None}
+    if not validated_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    return update("categories", item_id, validated_data)
+
 
 # Delete a document by ID
 @router.delete("/{collection_name}/{item_id}")
 async def delete_item(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
     return delete(collection_name, item_id)
+
+@router.delete("/categories/{item_id}")
+async def delete_category(item_id: str):
+    return delete("categories", item_id)
+
 

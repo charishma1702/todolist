@@ -1,94 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Home</title>
 </head>
+
 <body class="">
     <div id="tasks-container" class="flex">
         <!-- Side Panel -->
-        <aside id="defaultSidePanel" class="w-80 bg-gray-100 shadow-lg fixed top-0 left-0 z-40 h-screen transition-transform -translate-x-full sm:translate-x-0">
+        <aside id="defaultSidePanel"
+            class="w-80 bg-blue-100 shadow-lg fixed top-0 left-0 z-40 h-screen transition-transform -translate-x-full sm:translate-x-0">
             <div class="p-6">
                 <h2 class="text-2xl font-bold text-gray-800">Private</h2>
-                <div class="mt-4 overflow-y-auto">
+                <div class="mt-4">
+                    <div class="relative overf">
+                        <input id="new-list-input"
+                            class="w-full px-4 py-2 text-gray-700 border border-black-800 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
+                            type="text" placeholder="New List">
+                        <button id="add-new-list"
+                            class="absolute right-2 top-2 text-gray-600 hover:text-blue-500">➕</button>
+                    </div><br>
                     <ul id="lists" class="space-y-2 font-medium">
-                        <!-- List Items -->
-                        <li class="group">
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">🏠</span><b>Home</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="completed.html" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">✅</span><b>Completed</b>
-                                </span>
-                                <span id='completedTasksCount' class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="personal.html" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">👤</span><b>Personal</b>
-                                </span>
-                                <span id='personalTasksCount' class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">💻</span><b>Work</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">✈️</span><b>Travel</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">📚</span><b>Study</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 text-xs rounded-full">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">🏋️‍♂️</span><b>Workout</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                                <span class="flex items-center">
-                                    <span class="mr-3">🥗</span><b>Diet</b>
-                                </span>
-                                <span class="bg-gray-500 text-white px-2 py-1 text-xs rounded-full">0</span>
-                            </a>
-                        </li>
-                        
-
-                        <!-- New List Input -->
                         <li class="mt-4">
-                            <div class="relative">
-                                <input id="new-list-input" class="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400" type="text" placeholder=" + New List">
-                                <button id="add-new-list" class="absolute right-2 top-2 text-gray-600 hover:text-blue-500">➕</button>
-                            </div>
                         </li>
                     </ul>
+
                 </div>
             </div>
         </aside>
@@ -99,29 +37,139 @@
         const newListInput = document.getElementById('new-list-input');
         const addNewListButton = document.getElementById('add-new-list');
 
-        addNewListButton.addEventListener('click', () => {
+        addNewListButton.addEventListener('click', async () => {
             const newListName = newListInput.value.trim();
             if (newListName) {
-                const newListElement = document.createElement('li');
-                newListElement.innerHTML = `
-                    <a href="#" class="py-3 px-6 flex justify-between items-center rounded-lg hover:bg-gray-200 transition">
-                        <span class="flex items-center">
-                            <span class="mr-3">📝</span><b>${newListName}</b>
-                        </span>
-                        <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">0</span>
-                    </a>
-                `;
-                listsContainer.appendChild(newListElement);
-                newListInput.value = '';
+                // Call FastAPI to save the new list
+                try {
+                    const response = await fetch('http://localhost:8000/api/categories', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name: newListName })
+                    });
+                    if (response.ok) {
+                        newListInput.value = '';
+                        fetchCategories();  // Refresh the list
+                    } else {
+                        console.error('Failed to add new list');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
         });
 
-        // Add "Enter" key functionality for new list input
-        newListInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                addNewListButton.click();
+        async function fetchCategories() {
+            try {
+                const response = await fetch('http://localhost:8000/api/categories');
+                if (response.ok) {
+                    const data = await response.json();
+                    listsContainer.innerHTML = '';
+                    data.data.forEach(category => {
+                        const newListElement = document.createElement('li');
+                        newListElement.innerHTML = `
+                        <div class="group flex justify-between items-center rounded-lg hover:bg-blue-700 hover:text-white transition px-4 py-2">
+                            <a href="#" class="flex items-center">
+                                <span class="mr-3"></span><b>${category.name}</b>
+                            </a>
+
+                            <!-- Dropdown Menu -->
+                            <div class="relative hover:bg-blue-100 hover:rounded-full">
+                                <button onclick="toggleDropdown('${category._id}')" class="text-black hover:text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01M12 6h.01M12 12h.01M12 18h.01" />
+                                    </svg>
+                                </button>
+                                <ul id="dropdown-${category._id}" class="hidden z-30 absolute right-0 mt-2 w-30 bg-white border rounded-lg shadow-lg">
+                                    <li><button onclick="editList('${category._id}', '${category.name}')" class="block w-full text-black text-left px-4 py-2 hover:bg-gray-200">Edit</button></li>
+                                    <li><button onclick="deleteList('${category._id}')" class="block w-full text-left px-4 py-2 hover:bg-gray-200 text-red-600">Delete</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+
+                        listsContainer.appendChild(newListElement);
+                    });
+                } else {
+                    console.error('Failed to fetch categories');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Call the function to load categories initially
+        fetchCategories();
+
+        let activeDropdown = null;
+
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(`dropdown-${id}`);
+
+            // Close any open dropdown that's not the current one
+            if (activeDropdown && activeDropdown !== dropdown) {
+                activeDropdown.classList.add('hidden');
+            }
+
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+            activeDropdown = dropdown.classList.contains('hidden') ? null : dropdown;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (activeDropdown && !event.target.closest('.relative')) {
+                activeDropdown.classList.add('hidden');
+                activeDropdown = null;
             }
         });
+
+
+        async function editList(id, currentName) {
+            const newName = prompt("Edit List Name:", currentName);
+            if (newName && newName !== currentName) {
+                try {
+                    const response = await fetch(`http://localhost:8000/api/categories/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name: newName })
+                    });
+                    if (response.ok) {
+                        alert('List updated successfully!');
+                        fetchCategories();
+                    } else {
+                        alert('Failed to update list');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+        async function deleteList(id) {
+            if (confirm("Are you sure you want to delete this list?")) {
+                try {
+                    const response = await fetch(`http://localhost:8000/api/categories/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        alert('List deleted successfully!');
+                        fetchCategories();
+                    } else {
+                        alert('Failed to delete list');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+
+
     </script>
 </body>
+
 </html>

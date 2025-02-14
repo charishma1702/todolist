@@ -1,9 +1,6 @@
 __pycache__/
 .pyc
 
-crud/
-__pycache__/
-crud.cpython-310.pyc
 
 venv/
 bin
@@ -15,5 +12,7 @@ login.html
 personal.html
 signup.html
 work.html
+sidebar.html
 
+app/
 .gitignore

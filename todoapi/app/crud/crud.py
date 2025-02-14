@@ -7,7 +7,7 @@ from fastapi import HTTPException
 COLLECTIONS = {
     "users": Users_Collection,
     "tasks": Tasks_Collection,
-    "category": Categories_Collection
+    "categories": Categories_Collection
 }
 
 # Generic function to create a document in a collection
@@ -65,9 +65,8 @@ def get_all(collection_name: str):
 def update(collection_name: str, item_id: str, payload: dict):  # ✅ Accept dict directly
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
+    
     collection = COLLECTIONS[collection_name]
-
     try:
         update_result = collection.update_one({"_id": ObjectId(item_id)}, {"$set": payload})  # ✅ No dict conversion needed
 
@@ -80,13 +79,12 @@ def update(collection_name: str, item_id: str, payload: dict):  # ✅ Accept dic
 
 
 
+
 # Generic function to delete a document by ID
 def delete(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
     collection = COLLECTIONS[collection_name]
-
     try:
         result = collection.delete_one({"_id": ObjectId(item_id)})
 
@@ -96,6 +94,7 @@ def delete(collection_name: str, item_id: str):
         return {"message": f"{collection_name.capitalize()} deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
 
 def validate_status(cls, value):
     if value not in ["Completed", "Pending"]:
@@ -103,8 +102,10 @@ def validate_status(cls, value):
     return value
 
 def validate_collection_name(collection_name: str) -> str:
-
+    print("Collection name",collection_name)
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
     return collection_name
+
+
 

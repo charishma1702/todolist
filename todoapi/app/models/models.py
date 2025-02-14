@@ -34,3 +34,8 @@ class UpdateTaskStatusPayload(BaseModel):
 class CreateCategoryPayload(BaseModel):
     name: str
 
+
+class UpdateCategoryPayload(BaseModel):
+    name: str | None = None
+    
+

@@ -1,9 +1,8 @@
 from fastapi import FastAPI
-from app.routes import route
+from app.routes import route,home
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 app=FastAPI()
-from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,4 +16,6 @@ app.add_middleware(
 # Include routers
 # app.include_router(home.router)
 # app.include_router(users.router,prefix="/users")
-app.include_router(route.router)
+app.include_router(home.router)
+
+app.include_router(route.router,prefix="/api")
