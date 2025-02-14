@@ -1,305 +1,282 @@
 <html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <body class="overflow-hidden w-screen h-screen">
+        <div class="relative h-screen flex">
+            <main class="flex-1 relative z-10 px-9 pt-9">
+                <div class="flex items-center w-full">
+                    <h1 class="text-3xl font-bold text-black flex-grow" id="greeting-text">Hi, Charishma! 👋</h1>
 
-<body class="overflow-hidden w-screen h-screen">
-    <div class="relative h-screen flex">
-        <main class="flex-1 relative z-10 px-9 pt-9">
-            <div class="flex items-center w-full">
-                <h1 class="text-3xl font-bold text-black flex-grow" id="greeting-text">Hi, Charishma! 👋</h1>
+                    <div class="relative ml-auto p-2">
+                        <button id="today-button" class="w-40 bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white">Today</button>
+                        <div id="calendar-dropdown" class="hidden absolute top-12 right-0 bg-white shadow-md rounded-lg p-2">
+                            <input type="date" id="calendar-input" class="bg-gray-200 px-4 py-2 rounded-lg" />
+                        </div>
+                    </div>
 
-                <div class="relative ml-auto p-2">
-                    <button id="today-button"
-                        class="w-40 bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white">Today</button>
-                    <div id="calendar-dropdown"
-                        class="hidden absolute top-12 right-0 bg-white shadow-md rounded-lg p-2">
-                        <input type="date" id="calendar-input" class="bg-gray-200 px-4 py-2 rounded-lg">
+                    <div class="relative p-2">
+                        <button id="profile-button" class="w-10 h-10 shadow-lg rounded-full flex items-center justify-center hover:bg-gray-300">
+                            👤
+                        </button>
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg">
+                            <ul class="text-gray-700">
+                                <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="theme-button">Theme</li>
+                                <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="sign-out-button">Sign Out</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+                <br />
 
-                <div class="relative p-2">
-                    <button id="profile-button"
-                        class="w-10 h-10 shadow-lg rounded-full flex items-center justify-center hover:bg-gray-300">
-                        👤
-                    </button>
-                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg">
-                        <ul class="text-gray-700">
-                            <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="theme-button">Theme</li>
-                            <li class="px-4 py-2 hover:bg-gray-300 cursor-pointer" id="sign-out-button">Sign Out</li>
-                        </ul>
+                <button id="createTaskBtn" aria-label="Create Task" class="top-18 bg-blue-400 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:bg-blue-800 hover:text-white">
+                    + Create Task
+                </button>
+                <br />
+                <br />
+
+                <div id="taskContainer" class="mt-6 space-y-4"></div>
+
+                <!-- Task Modal -->
+                <div id="taskModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[96]">
+                        <h2 class="text-xl font-bold mb-4">Create Task</h2>
+
+                        <label class="block mb-1">Category</label>
+                        <select id="taskCategory" class="w-full px-3 py-2 border rounded-lg mb-3"> </select>
+                        <input id="taskName" type="text" placeholder="Task Name" class="w-full px-3 py-2 border rounded-lg mb-3" />
+
+                        <label class="block mb-1">Description</label>
+                        <input id="taskDescription" type="text" class="w-full px-3 py-2 border rounded-lg mb-3" />
+
+                        <label class="block mb-1">Due Date</label>
+                        <input id="taskDate" type="date" class="w-full px-3 py-2 border rounded-lg mb-3" />
+
+                        <label class="block mb-1">Time</label>
+                        <input id="taskTime" type="time" class="w-full px-3 py-2 border rounded-lg mb-3" />
+
+                        <label class="block mb-1">Priority</label>
+                        <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg mb-3">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+
+                        <div class="flex justify-end space-x-2 mt-4">
+                            <button id="cancelTaskBtn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-red-600">Cancel</button>
+                            <button onclick="resetTaskForm()" id="resetTaskBtn" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-900">Reset</button>
+                            <button id="addTaskBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-800">Add Task</button>
+                        </div>
                     </div>
                 </div>
-            </div><br>
+            </main>
+        </div>
+        <!-- Error Toast -->
+        <div id="error-toast" class="fixed z-50 top-12 right-8 bg-red-500 text-white rounded-lg px-4 py-2 shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+            <span id="error-message"></span>
+        </div>
 
-            <button id="createTaskBtn" aria-label="Create Task"
-                class="top-18 bg-blue-400 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:bg-blue-800 hover:text-white ">
-                + Create Task
-            </button>
-            <br><br>
-
-
-            <div id="taskContainer" class="mt-6 space-y-4"></div>
-
-            <!-- Task Modal -->
-            <div id="taskModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-[96]">
-                    <h2 class="text-xl font-bold mb-4">Create Task</h2>
-
-                    <label class="block mb-1">Category</label>
-                    <select id="taskCategory" class="w-full px-3 py-2 border rounded-lg mb-3">
-                        
-                    </select>
-                    <input id="taskName" type="text" placeholder="Task Name"
-                        class="w-full px-3 py-2 border rounded-lg mb-3">
-
-                    <label class="block mb-1">Description</label>
-                    <input id="taskDescription" type="text" class="w-full px-3 py-2 border rounded-lg mb-3">
-
-                    <label class="block mb-1">Due Date</label>
-                    <input id="taskDate" type="date" class="w-full px-3 py-2 border rounded-lg mb-3">
-
-                    <label class="block mb-1">Time</label>
-                    <input id="taskTime" type="time" class="w-full px-3 py-2 border rounded-lg mb-3">
-
-                    <label class="block mb-1">Priority</label>
-                    <select id="taskPriority" class="w-full px-3 py-2 border rounded-lg mb-3">
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                    </select>
-
-                    <div class="flex justify-end space-x-2 mt-4">
-                        <button id="cancelTaskBtn"
-                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-red-600">Cancel</button>
-                        <button onclick="resetTaskForm()" id="resetTaskBtn"
-                            class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-900">Reset</button>
-                        <button id="addTaskBtn"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-800">Add Task</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    <!-- Error Toast -->
-    <div id="error-toast"
-        class="fixed z-50 top-12 right-8 bg-red-500 text-white rounded-lg px-4 py-2 shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-        <span id="error-message"></span>
-    </div>
-    
-
-    <script>
-let categories = []
-        const taskInputs = {
-            name: document.getElementById("taskName"),
-            category: document.getElementById("taskCategory"),
-            date: document.getElementById("taskDate"),
-            time: document.getElementById("taskTime"),
-            priority: document.getElementById("taskPriority"),
-            description: document.getElementById("taskDescription")
-        };
-        const categorySelect = document.getElementById('taskCategory');
-
-        const greetingText = document.getElementById("greeting-text");
-        const todayButton = document.getElementById("today-button");
-
-        const calendarDropdown = document.getElementById("calendar-dropdown");
-        const calendarInput = document.getElementById("calendar-input");
-
-        const profileButton = document.getElementById("profile-button");
-        const profileDropdown = document.getElementById("profile-dropdown");
-
-        const createTaskBtn = document.getElementById("createTaskBtn");
-        const taskModal = document.getElementById("taskModal");
-
-        const cancelTaskBtn = document.getElementById("cancelTaskBtn");
-        const addTaskBtn = document.getElementById("addTaskBtn");
-        const resetTaskBtn = document.getElementById("resetTaskBtn");
-
-        const taskContainer = document.getElementById("taskContainer");
-        const API_BASE_URL = "http://127.0.0.1:8000/api";
-
-        const taskModalTitle = document.querySelector("#taskModal h2");
-        let categoriesMap = new Map();
-
-
-        createTaskBtn.addEventListener("click", async() => {
-            await fetchCategories()
-            taskModal.classList.remove("hidden")
-        });
-
-        
-        cancelTaskBtn.addEventListener("click", () => {
-            taskModal.classList.add("hidden");
-            resetTaskForm();  // Reset the form
-        });
-
-        addTaskBtn.addEventListener("click", async () => {
-            const task = {
-                name: taskInputs.name.value.trim() ? taskInputs.name.value : null,
-                category: taskInputs.category.value,
-                description: taskInputs.description.value ? taskInputs.description.value : null,
-                status: "pending",
-                due_date: taskInputs.date.value && taskInputs.time.value
-                    ? `${taskInputs.date.value}T${taskInputs.time.value}:00`
-                    : null,
-                priority_level: taskInputs.priority.value,
+        <script>
+            let categories = [];
+            const taskInputs = {
+                name: document.getElementById("taskName"),
+                category: document.getElementById("taskCategory"),
+                date: document.getElementById("taskDate"),
+                time: document.getElementById("taskTime"),
+                priority: document.getElementById("taskPriority"),
+                description: document.getElementById("taskDescription"),
             };
+            const categorySelect = document.getElementById("taskCategory");
 
-            
-            if (!task.name) {
-                showErrorToast("Task name is mandatory");
-                return
-            };
+            const greetingText = document.getElementById("greeting-text");
+            const todayButton = document.getElementById("today-button");
 
-            try {
-                let response;
-                if (editingTaskId) {
-                    // Update Task
-                    response = await fetch(`${API_BASE_URL}/tasks/${editingTaskId}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(task),
-                    });
-                } else {
-                    // Create New Task
-                    response = await fetch(`${API_BASE_URL}/tasks`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(task),
-                    });
-                }
+            const calendarDropdown = document.getElementById("calendar-dropdown");
+            const calendarInput = document.getElementById("calendar-input");
 
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || "Failed to save task");
+            const profileButton = document.getElementById("profile-button");
+            const profileDropdown = document.getElementById("profile-dropdown");
 
+            const createTaskBtn = document.getElementById("createTaskBtn");
+            const taskModal = document.getElementById("taskModal");
 
-                if (editingTaskId) {
-                    updateTaskInUI(editingTaskId, task); // Call the update function here
-                    editingTaskId = null;
-                    addTaskBtn.textContent = "Add Task";
-                }
+            const cancelTaskBtn = document.getElementById("cancelTaskBtn");
+            const addTaskBtn = document.getElementById("addTaskBtn");
+            const resetTaskBtn = document.getElementById("resetTaskBtn");
+
+            const taskContainer = document.getElementById("taskContainer");
+            const API_BASE_URL = "http://127.0.0.1:8000/api";
+
+            const taskModalTitle = document.querySelector("#taskModal h2");
+            let categoriesMap = new Map();
+
+            createTaskBtn.addEventListener("click", async () => {
+                await fetchCategories();
+                taskModal.classList.remove("hidden");
+            });
+
+            cancelTaskBtn.addEventListener("click", () => {
                 taskModal.classList.add("hidden");
-                resetTaskForm();
-                await getTasks();
+                resetTaskForm(); // Reset the form
+            });
+
+            addTaskBtn.addEventListener("click", async () => {
+                const task = {
+                    name: taskInputs.name.value.trim() ? taskInputs.name.value : null,
+                    category: taskInputs.category.value,
+                    description: taskInputs.description.value ? taskInputs.description.value : null,
+                    status: "pending",
+                    due_date: taskInputs.date.value && taskInputs.time.value ? `${taskInputs.date.value}T${taskInputs.time.value}:00` : null,
+                    priority_level: taskInputs.priority.value,
+                };
+
+                if (!task.name) {
+                    showErrorToast("Task name is mandatory");
+                    return;
+                }
+
+                try {
+                    let response;
+                    if (editingTaskId) {
+                        // Update Task
+                        response = await fetch(`${API_BASE_URL}/tasks/${editingTaskId}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(task),
+                        });
+                    } else {
+                        // Create New Task
+                        response = await fetch(`${API_BASE_URL}/tasks`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(task),
+                        });
+                    }
+
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || "Failed to save task");
+
+                    if (editingTaskId) {
+                        updateTaskInUI(editingTaskId, task); // Call the update function here
+                        editingTaskId = null;
+                        addTaskBtn.textContent = "Add Task";
+                    }
+                    taskModal.classList.add("hidden");
+                    resetTaskForm();
+                    await getTasks();
+                } catch (error) {
+                    showErrorToast(error.message);
+                }
+            });
+            function fetchCategories() {
+                return fetch("http://127.0.0.1:8000/api/categories")
+                    .then((response) => response.json())
+                    .then((result) => {
+                        categories = result.data || []; // Get the array from 'data'
+                        const categorySelect = taskInputs.category;
+                        categorySelect.innerHTML = `<option value="">Select Category</option>`;
+                        categories.forEach((category) => {
+                            const option = document.createElement("option");
+                            option.value = category._id;
+                            option.textContent = category.name;
+                            categorySelect.appendChild(option);
+                        });
+                    })
+                    .catch((error) => console.error("Error fetching categories:", error));
             }
-            catch (error) {
-                showErrorToast(error.message);
-            }
-        });
-        function fetchCategories() {
-            return fetch("http://127.0.0.1:8000/api/categories")
-                .then((response) => response.json())
-                .then((result) => {
-                     categories = result.data || []; // Get the array from 'data'
-                    const categorySelect = taskInputs.category;
-                    categorySelect.innerHTML = `<option value="">Select Category</option>`;
-                    categories.forEach((category) => {
-                        const option = document.createElement("option");
-                        option.value = category._id;
-                        option.textContent = category.name;
-                        categorySelect.appendChild(option);
-                    });
-                })
-                .catch((error) => console.error("Error fetching categories:", error));
-        }
 
-        function showErrorToast(message) {
-            const toast = document.getElementById("error-toast");
-            const errorMessage = document.getElementById("error-message");
+            function showErrorToast(message) {
+                const toast = document.getElementById("error-toast");
+                const errorMessage = document.getElementById("error-message");
 
-            errorMessage.textContent = message;
-            toast.classList.remove("opacity-0", "pointer-events-none");
-            toast.classList.add("opacity-100");
-
-            setTimeout(() => {
-                toast.classList.remove("opacity-100");
-                toast.classList.add("opacity-0");
+                errorMessage.textContent = message;
+                toast.classList.remove("opacity-0", "pointer-events-none");
+                toast.classList.add("opacity-100");
 
                 setTimeout(() => {
-                    toast.classList.add("pointer-events-none");
-                }, 300); // This duration matches the Tailwind transition duration
-            }, 3000); // Toast stays visible for 3 seconds
-        }
-        document.addEventListener("DOMContentLoaded", async () => {
-    await fetchCategories();  // Load categories once
-    await getTasks();         // Then load tasks
-});
+                    toast.classList.remove("opacity-100");
+                    toast.classList.add("opacity-0");
 
-
-        window.addEventListener("click", (event) => {
-            const isClickInsideModal = taskModal.contains(event.target);
-            const isClickOnModalContent = event.target.closest(".bg-white"); // Checks if click is on the modal content
-
-            // Close modal only if click is outside modal content
-            if (!isClickInsideModal && !isClickOnModalContent) {
-                taskModal.classList.add("hidden");
+                    setTimeout(() => {
+                        toast.classList.add("pointer-events-none");
+                    }, 300); // This duration matches the Tailwind transition duration
+                }, 3000); // Toast stays visible for 3 seconds
             }
-        });
 
-
-
-        createTaskBtn.addEventListener("click", (event) => {
-            event.stopPropagation(); // Prevent the modal from closing
-            editingTaskId = null; // Reset editing state
-            taskModalTitle.textContent = "Create Task";
-            taskModal.classList.remove("hidden");
-        });
-
-        function openEditModal(task) {
-            editingTaskId = task._id;
-            taskInputs.name.value = task.name;
-            taskInputs.date.value = task.due_date.split("T")[0];
-            taskInputs.time.value = task.due_date.split("T")[1].slice(0, 5);
-            taskInputs.priority.value = task.priority_level;
-            taskInputs.description.value = task.description;
-
-            // Fetch categories and then set the selected value
-            fetchCategories().then(() => {
-                taskInputs.category.value = task.category || "";
+            document.addEventListener("DOMContentLoaded", async () => {
+                await fetchCategories(); // Load categories once
+                await getTasks(); // Then load tasks
             });
 
-            taskModal.classList.remove("hidden");
-            addTaskBtn.textContent = "Update Task";
-            taskModalTitle.textContent = "Edit Task";
-        }
+            window.addEventListener("click", (event) => {
+                const isClickInsideModal = taskModal.contains(event.target);
+                const isClickOnModalContent = event.target.closest(".bg-white"); // Checks if click is on the modal content
 
-
-
-        function resetTaskForm() {
-            taskInputs.name.value = "";
-            taskInputs.description.value = "";
-            taskInputs.date.value = "";
-            taskInputs.time.value = "";
-            taskInputs.priority.value = "Low";
-
-            editingTaskId = null;  // Clear editing state
-            addTaskBtn.textContent = "Add Task";
-        }
-
-        function addDescriptionToggle(taskElement) {
-            taskElement.addEventListener("click", (event) => {
-                // Check if the clicked element is NOT a button or inside a button
-                if (!event.target.closest("button")) {
-                    const descriptionElement = taskElement.querySelector(".taskDescription");
-                    descriptionElement.classList.toggle("hidden");
+                // Close modal only if click is outside modal content
+                if (!isClickInsideModal && !isClickOnModalContent) {
+                    taskModal.classList.add("hidden");
                 }
             });
-        }
 
-        function addTaskToUI(task) {
-            const taskElement = document.createElement("div");
-            taskElement.classList.add("bg-white", "p-4", "rounded-lg", "shadow-md", "flex", "flex-col", "w-[85%]", "cursor-pointer");
-            taskElement.dataset.taskId = task._id;
+            createTaskBtn.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the modal from closing
+                editingTaskId = null; // Reset editing state
+                taskModalTitle.textContent = "Create Task";
+                taskModal.classList.remove("hidden");
+            });
 
-            const statusColor = task.status === "completed" ? "text-green-600" : "text-red-600";
-            const isChecked = task.status === "completed" ? "checked" : "";
-            const category = categories.find((categ)=>categ._id===task.category)
+            function openEditModal(task) {
+                editingTaskId = task._id;
+                taskInputs.name.value = task.name;
+                taskInputs.date.value = task.due_date.split("T")[0];
+                taskInputs.time.value = task.due_date.split("T")[1].slice(0, 5);
+                taskInputs.priority.value = task.priority_level;
+                taskInputs.description.value = task.description;
 
-            taskElement.innerHTML = `
+                // Fetch categories and then set the selected value
+                fetchCategories().then(() => {
+                    taskInputs.category.value = task.category || "";
+                });
+
+                taskModal.classList.remove("hidden");
+                addTaskBtn.textContent = "Update Task";
+                taskModalTitle.textContent = "Edit Task";
+            }
+
+            function resetTaskForm() {
+                taskInputs.name.value = "";
+                taskInputs.description.value = "";
+                taskInputs.date.value = "";
+                taskInputs.time.value = "";
+                taskInputs.priority.value = "Low";
+
+                editingTaskId = null; // Clear editing state
+                addTaskBtn.textContent = "Add Task";
+            }
+
+            function addDescriptionToggle(taskElement) {
+                taskElement.addEventListener("click", (event) => {
+                    // Check if the clicked element is NOT a button or inside a button
+                    if (!event.target.closest("button")) {
+                        const descriptionElement = taskElement.querySelector(".taskDescription");
+                        descriptionElement.classList.toggle("hidden");
+                    }
+                });
+            }
+
+            function addTaskToUI(task) {
+                const taskElement = document.createElement("div");
+                taskElement.classList.add("bg-white", "p-4", "rounded-lg", "shadow-md", "flex", "flex-col", "w-[85%]", "cursor-pointer");
+                taskElement.dataset.taskId = task._id;
+
+                const statusColor = task.status === "completed" ? "text-green-600" : "text-red-600";
+                const isChecked = task.status === "completed" ? "checked" : "";
+                const category = categories.find((categ) => categ._id === task.category) || { name: "Uncategorized" };
+
+                taskElement.innerHTML = `
     <div class="flex justify-between items-start border-b py-4">
     <div>
         <div class="flex items-center">
@@ -329,124 +306,122 @@ let categories = []
     </div>
 </div>`;
 
-            taskContainer.appendChild(taskElement);
+                taskContainer.appendChild(taskElement);
 
-            // Add Event Listeners
-            taskElement.querySelector(".statusCheckbox").addEventListener("change", (e) => {
-                const updatedStatus = e.target.checked ? "completed" : "pending";
-                updateTaskStatus(task._id, updatedStatus, taskElement);
-            });
-
-            taskElement.querySelector(".editTaskBtn").addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevents the click from toggling the description
-                openEditModal(task);
-            });
-
-            taskElement.querySelector(".removeTaskBtn").addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevents the click from toggling the description
-                deleteTask(task._id, taskElement);
-            });
-            // Toggle description on click, excluding button clicks
-            addDescriptionToggle(taskElement);
-        }
-
-        let editingTaskId = null;
-
-        async function getTasks() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/tasks`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.detail || "Failed to fetch tasks");
-        taskContainer.innerHTML = "";
-        data.data.forEach(addTaskToUI);
-    } catch (error) {
-        showErrorToast(error.message);
-    }
-}
-        getTasks();
-
-        async function deleteTask(taskId, taskElement) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, { method: "DELETE" });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || "Failed to delete task");
-                taskElement.remove();
-            } catch (error) {
-                showErrorToast(error.message);
-            }
-        }
-
-        async function updateTaskStatus(taskId, status, taskElement) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/update_status`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status }),
+                // Add Event Listeners
+                taskElement.querySelector(".statusCheckbox").addEventListener("change", (e) => {
+                    const updatedStatus = e.target.checked ? "completed" : "pending";
+                    updateTaskStatus(task._id, updatedStatus, taskElement);
                 });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || "Failed to update task status");
 
-                // Update the status in the UI
-                const statusElement = taskElement.querySelector(".taskStatus");
-                statusElement.textContent = status;
-                statusElement.classList.toggle("text-green-600", status === "completed");
-                statusElement.classList.toggle("text-red-600", status === "pending");
-            } catch (error) {
-                showErrorToast(error.message);
+                taskElement.querySelector(".editTaskBtn").addEventListener("click", (event) => {
+                    event.stopPropagation(); // Prevents the click from toggling the description
+                    openEditModal(task);
+                });
+
+                taskElement.querySelector(".removeTaskBtn").addEventListener("click", (event) => {
+                    event.stopPropagation(); // Prevents the click from toggling the description
+                    deleteTask(task._id, taskElement);
+                });
+                // Toggle description on click, excluding button clicks
+                addDescriptionToggle(taskElement);
             }
-        }
-        function updateTaskInUI(taskId, updatedData) {
 
-            const taskElements = document.querySelectorAll("#taskContainer > div");
-            taskElements.forEach(taskElement => {
-                if (taskElement.dataset.taskId === taskId) {
-                    // Update the task name
-                    const taskNameElement = taskElement.querySelector(".taskName");
-                    taskNameElement.textContent = updatedData.name;
+            let editingTaskId = null;
 
-                    // Update the status
+            async function getTasks() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/tasks`);
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || "Failed to fetch tasks");
+                    taskContainer.innerHTML = "";
+                    data.data.forEach(addTaskToUI);
+                } catch (error) {
+                    showErrorToast(error.message);
+                }
+            }
+
+            getTasks();
+
+            async function deleteTask(taskId, taskElement) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, { method: "DELETE" });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || "Failed to delete task");
+                    taskElement.remove();
+                } catch (error) {
+                    showErrorToast(error.message);
+                }
+            }
+
+            async function updateTaskStatus(taskId, status, taskElement) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/update_status`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status }),
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || "Failed to update task status");
+
+                    // Update the status in the UI
                     const statusElement = taskElement.querySelector(".taskStatus");
-                    statusElement.textContent = updatedData.status;
-                    statusElement.classList.toggle("text-green-600", updatedData.status === "completed");
-                    statusElement.classList.toggle("text-red-600", updatedData.status === "pending");
+                    statusElement.textContent = status;
+                    statusElement.classList.toggle("text-green-600", status === "completed");
+                    statusElement.classList.toggle("text-red-600", status === "pending");
+                } catch (error) {
+                    showErrorToast(error.message);
+                }
+            }
+            function updateTaskInUI(taskId, updatedData) {
+                const taskElements = document.querySelectorAll("#taskContainer > div");
+                taskElements.forEach((taskElement) => {
+                    if (taskElement.dataset.taskId === taskId) {
+                        // Update the task name
+                        const taskNameElement = taskElement.querySelector(".taskName");
+                        taskNameElement.textContent = updatedData.name;
 
-                    // Update the due date and priority level
-                    const dueDate = new Date(updatedData.due_date).toLocaleString();
-                    const taskDetails = taskElement.querySelector("p.text-sm");
-                    taskDetails.innerHTML = `
+                        // Update the status
+                        const statusElement = taskElement.querySelector(".taskStatus");
+                        statusElement.textContent = updatedData.status;
+                        statusElement.classList.toggle("text-green-600", updatedData.status === "completed");
+                        statusElement.classList.toggle("text-red-600", updatedData.status === "pending");
+
+                        // Update the due date and priority level
+                        const dueDate = new Date(updatedData.due_date).toLocaleString();
+                        const taskDetails = taskElement.querySelector("p.text-sm");
+                        taskDetails.innerHTML = `
                         ${updatedData.category} | 
-                        <span class="taskStatus ${updatedData.status === 'completed' ? 'text-green-600' : 'text-red-600'} font-semibold">${updatedData.status}</span> | 
+                        <span class="taskStatus ${updatedData.status === "completed" ? "text-green-600" : "text-red-600"} font-semibold">${updatedData.status}</span> | 
                         ${dueDate} | 
                         Priority: <span class="font-semibold">${updatedData.priority_level}</span>
                     `;
 
-                    // Update the description
-                    const descriptionElement = taskElement.querySelector(".taskDescription");
-                    descriptionElement.textContent = updatedData.description;
-                }
+                        // Update the description
+                        const descriptionElement = taskElement.querySelector(".taskDescription");
+                        descriptionElement.textContent = updatedData.description;
+                    }
+                });
+            }
+
+            function setGreeting() {
+                const hours = new Date().getHours();
+                let greeting = "Hi, Charishma! 👋";
+                if (hours >= 5 && hours < 12) greeting = "Good Morning, Charishma! ☀️";
+                else if (hours >= 12 && hours < 17) greeting = "Good Afternoon, Charishma! 🌤️";
+                else greeting = "Good Evening, Charishma! 🌙";
+                greetingText.textContent = greeting;
+            }
+
+            setGreeting();
+
+            todayButton.addEventListener("click", () => {
+                calendarDropdown.classList.toggle("hidden");
+                calendarInput.value = new Date().toISOString().split("T")[0];
+                setTimeout(() => calendarInput.showPicker(), 100);
             });
-        }
 
-        function setGreeting() {
-            const hours = new Date().getHours();
-            let greeting = "Hi, Charishma! 👋";
-            if (hours >= 5 && hours < 12) greeting = "Good Morning, Charishma! ☀️";
-            else if (hours >= 12 && hours < 17) greeting = "Good Afternoon, Charishma! 🌤️";
-            else greeting = "Good Evening, Charishma! 🌙";
-            greetingText.textContent = greeting;
-        }
-
-        setGreeting();
-
-        todayButton.addEventListener("click", () => {
-            calendarDropdown.classList.toggle("hidden");
-            calendarInput.value = new Date().toISOString().split("T")[0];
-            setTimeout(() => calendarInput.showPicker(), 100);
-        });
-
-        profileButton.addEventListener("click", () => profileDropdown.classList.toggle("hidden"));
-
-    </script>
-</body>
-
+            profileButton.addEventListener("click", () => profileDropdown.classList.toggle("hidden"));
+        </script>
+    </body>
 </html>
