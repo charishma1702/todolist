@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center relative">
+        <button id="backBtn" class="absolute top-4 left-4 text-gray-600 hover:text-gray-800">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <div id="profileInfo">
+            <img src="data:image/png;base64,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"
+                alt="Profile Picture" class="mx-auto rounded-full w-24 h-24 border-4 border-gray-300">
+            <h2 class="mt-4 text-xl font-semibold text-gray-800" id="profileName"></h2>
+            <p class="text-gray-500 text-sm" id="email"></p>
+            <div class="mt-4 flex justify-around text-gray-700">
+
+            </div>
+            <div class="mt-6 flex flex-col gap-2">
+                <button id="edit-profile"
+                    class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 w-full">Edit Profile</button>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        const firstName = localStorage.getItem("first_name");
+        const email = localStorage.getItem("email")
+        document.getElementById("profileName").textContent = ` Hi ${firstName}!`
+        document.getElementById("email").textContent = `${email}`
+        document.getElementById("backBtn").addEventListener("click", () => {
+            window.location.href = "/index"
+        })
+        document.getElementById('edit-profile').addEventListener("click", () => {
+            document.getElementById('profileContainer').classList.toggle('w-[450px]');
+        });
+    </script>
+</body>
+
+</html>
