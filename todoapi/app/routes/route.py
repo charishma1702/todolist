@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi import APIRouter, HTTPException, Request
 from app.crud.crud import (create, get_by_id, get_all, update, delete)
 from app.models.models import (CreateTaskPayload, UpdateTaskPayload, CreateUserPayload, UpdateUserPayload,UpdateTaskStatusPayload,CreateCategoryPayload)
 from app.database.db import Users_Collection, Tasks_Collection, Categories_Collection
@@ -26,17 +26,15 @@ COLLECTIONS = {
     "categories":Categories_Collection
 }
 
+
 @router.post("/{collection_name}")
 async def create_item(collection_name: str, request: Request, payload: CreateUserPayload | CreateTaskPayload | CreateCategoryPayload):
     if collection_name not in CREATE_MODELS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-    # Get the expected model for this collection
     model = CREATE_MODELS[collection_name]
-    # If payload is provided, use it (for automatic Pydantic validation)
     if payload:
         validated_data = payload.model_dump()
     else:
-        # Otherwise, parse the request body as JSON and manually validate
         body = await request.json()
         try:
             model(**body)
@@ -62,14 +60,11 @@ async def get_all_items(collection_name: str):
     return get_all(collection_name)
 
 
-# Update a document by ID
 @router.put("/{collection_name}/{item_id}")
 async def update_item(collection_name: str, item_id: str, payload: UpdateUserPayload | UpdateTaskPayload):
     if collection_name not in UPDATE_MODELS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
-
-    validated_data = payload.model_dump(exclude_unset=True)  # ✅ Convert to dict
-
+    validated_data = payload.model_dump(exclude_unset=True)  #  Convert to dict
     return update(collection_name, item_id, validated_data)
 
 
@@ -80,13 +75,13 @@ async def update_task_status(item_id: str, payload: UpdateTaskStatusPayload):
         raise HTTPException(status_code=400, detail="Status field is required")
     return update("tasks", item_id, validated_data)
 
+
 @router.patch("/categories/{item_id}")
 async def update_category(item_id: str, payload: dict):
     validated_data = {k: v for k, v in payload.items() if v is not None}
     if not validated_data:
         raise HTTPException(status_code=400, detail="No data to update")
     return update("categories", item_id, validated_data)
-
 
 # Delete a document by ID
 @router.delete("/{collection_name}/{item_id}")

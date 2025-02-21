@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import datetime
 from typing import Optional
 
@@ -15,17 +15,21 @@ class UpdateTaskPayload(BaseModel):
     description: str | None
     due_date: datetime.datetime | None
     category:str
+    priority_level:str | None
 
 class CreateUserPayload(BaseModel):
     name: str
-    email: str
-    mobile: str
+    email: EmailStr
+    password: str
 
 class UpdateUserPayload(BaseModel):
     name: str | None = None
-    email: str | None = None
-    mobile: str | None = None
+    email: EmailStr | None = None
+    password: str | None = None
 
+class LoginRequest(BaseModel):
+    email:EmailStr
+    password:str
 
 class UpdateTaskStatusPayload(BaseModel):
     status: str 

@@ -12,10 +12,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# Include routers
-# app.include_router(home.router)
-# app.include_router(users.router,prefix="/users")
 app.include_router(home.router)
-
 app.include_router(route.router,prefix="/api")

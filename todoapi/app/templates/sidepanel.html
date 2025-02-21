@@ -13,14 +13,14 @@
         <aside id="defaultSidePanel"
             class="w-80 bg-blue-100 shadow-lg fixed top-0 left-0 z-40 h-screen transition-transform -translate-x-full sm:translate-x-0">
             <div class="p-6">
-                <h2 class="text-2xl font-bold text-gray-800">Private</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Categories</h2>
                 <div class="mt-4">
-                    <div class="relative overf">
+                    <div class="relative overflow-hidden">
                         <input id="new-list-input"
                             class="w-full px-4 py-2 text-gray-700 border border-black-800 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
                             type="text" placeholder="New List">
                         <button id="add-new-list"
-                            class="absolute right-2 top-2 text-gray-600 hover:text-blue-500">➕</button>
+                            class="absolute right-2 top-2 text-gray-600 hover:bg-blue-300  hover:rounded-md">➕</button>
                     </div><br>
                     <ul id="lists" class="space-y-2 font-medium">
                         <li class="mt-4">
@@ -30,19 +30,20 @@
                 </div>
             </div>
         </aside>
-    </div>
+    </div>zz
 
     <script>
         const listsContainer = document.getElementById('lists');
         const newListInput = document.getElementById('new-list-input');
         const addNewListButton = document.getElementById('add-new-list');
+        let url="http://127.0.0.1:8000/api"
 
         addNewListButton.addEventListener('click', async () => {
             const newListName = newListInput.value.trim();
             if (newListName) {
                 // Call FastAPI to save the new list
                 try {
-                    const response = await fetch('http://localhost:8000/api/categories', {
+                    const response = await fetch(`${url}/categories`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -63,7 +64,7 @@
 
         async function fetchCategories() {
             try {
-                const response = await fetch('http://localhost:8000/api/categories');
+                const response = await fetch(`${url}/categories`);
                 if (response.ok) {
                     const data = await response.json();
                     listsContainer.innerHTML = '';
@@ -89,7 +90,6 @@
                             </div>
                         </div>
                     `;
-
                         listsContainer.appendChild(newListElement);
                     });
                 } else {
@@ -99,12 +99,9 @@
                 console.error('Error:', error);
             }
         }
-
         // Call the function to load categories initially
-        fetchCategories();
-
+        // fetchCategories();
         let activeDropdown = null;
-
         function toggleDropdown(id) {
             const dropdown = document.getElementById(`dropdown-${id}`);
 
@@ -117,7 +114,6 @@
             dropdown.classList.toggle('hidden');
             activeDropdown = dropdown.classList.contains('hidden') ? null : dropdown;
         }
-
         // Close dropdown when clicking outside
         document.addEventListener('click', (event) => {
             if (activeDropdown && !event.target.closest('.relative')) {
@@ -125,38 +121,62 @@
                 activeDropdown = null;
             }
         });
+        // async function editList(id, currentName) {
+        //     const newName = prompt("Edit List Name:", currentName);
+        //     if (newName && newName !== currentName) {
 
 
+        //         try {
+        //             const response = await fetch(`${url}/categories/${id}`, {
+        //                 method: 'PUT',
+        //                 headers: {
+        //                     'Content-Type': 'application/json'
+        //                 },
+        //                 body: JSON.stringify({ name: newName })
+        //             });
+        //             if (response.ok) {
+        //                 fetchCategories();
+        //             } else {
+        //                 alert('Failed to update list');
+        //             }
+        //         } catch (error) {
+        //             console.error('Error:', error);
+        //         }
+        //     }
+        // }
         async function editList(id, currentName) {
-            const newName = prompt("Edit List Name:", currentName);
-            if (newName && newName !== currentName) {
-                try {
-                    const response = await fetch(`http://localhost:8000/api/categories/${id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ name: newName })
-                    });
-                    if (response.ok) {
-                        alert('List updated successfully!');
-                        fetchCategories();
-                    } else {
-                        alert('Failed to update list');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
+            const newName = prompt("Edit list name:", currentName);
+            if (newName === null || newName.trim() === "") return;
+
+
+            const payload = { name: newName.trim() };
+
+
+            try {
+                const response = await fetch(`${url}/categories/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+
+                if (response.ok) {
+                    fetchCategories()
+                } else {
+                    alert("Error updating list");
                 }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while updating the list");
             }
         }
         async function deleteList(id) {
             if (confirm("Are you sure you want to delete this list?")) {
                 try {
-                    const response = await fetch(`http://localhost:8000/api/categories/${id}`, {
+                    const response = await fetch(`${url}/categories/${id}`, {
                         method: 'DELETE'
                     });
                     if (response.ok) {
-                        alert('List deleted successfully!');
                         fetchCategories();
                     } else {
                         alert('Failed to delete list');
@@ -166,8 +186,7 @@
                 }
             }
         }
-
-
+        document.addEventListener('DOMContentLoaded',fetchCategories)
 
     </script>
 </body>
